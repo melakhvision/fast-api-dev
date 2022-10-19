@@ -1,17 +1,21 @@
-FROM python:3.9.12-slim
+# 
+FROM python:3.9
 
-RUN pip install fastapi uvicorn poetry wheel virtualenv
+# 
+WORKDIR /code
 
-EXPOSE 8000
+# 
+COPY ./requirements.txt /code/requirements.txt
 
-WORKDIR /usr/src/projectname
+#
+COPY .package /code/package
 
-ENV PORT 8000
-ENV HOST "0.0.0.0"COPY ./src/ /projectname/src
-COPY ./main.py /projectname
-COPY ./pyproject.toml /projectname
+# 
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
-WORKDIR /projectnameRUN poetry config virtualenvs.create false \
-  && poetry install
+# 
+COPY ./package /code/package
 
-CMD ["uvicorn", "main:app"]
+# 
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+
